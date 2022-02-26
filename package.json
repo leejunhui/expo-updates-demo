@@ -1,0 +1,30 @@
+{
+  "name": "lerna-yarn-workspace-demo",
+  "private": "true",
+  "workspaces": {
+    "packages": [
+      "packages/*"
+    ],
+    "nohoist": [
+      "**/react",
+      "**/react-native",
+      "**/react-native/**"
+    ]
+  },
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "devDependencies": {
+    "lerna": "^4.0.0"
+  },
+  "scripts": {
+    "reset": "find . -type dir -name node_modules | xargs rm -rf && rm -rf yarn.lock",
+    "pods": "yarn pod",
+    "pod": "(cd packages/sl-core/ios && pod install --repo-update)",
+    "start": "yarn workspace sl-core start",
+    "restart": "yarn workspace sl-core start-reset-cache",
+    "ios": "(cd packages/sl-core && yarn ios)",
+    "ios-13pm": "yarn workspace sl-core react-native run-ios --simulator \"iPhone 13 Pro Max\"",
+    "xcode": "open packages/sl-core/ios/BooklnSaas.xcworkspace"
+  }
+}
