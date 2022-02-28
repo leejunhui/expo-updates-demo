@@ -8,7 +8,7 @@
  * @format
  */
 
-import React from "react";
+import React, { useEffect } from "react";
 import {
   SafeAreaView,
   ScrollView,
@@ -26,6 +26,8 @@ import {
   LearnMoreLinks,
   ReloadInstructions,
 } from "react-native/Libraries/NewAppScreen";
+
+// import Constants from "expo-constants";
 
 const Section: React.FC<{
   title: string;
@@ -60,6 +62,10 @@ const Section: React.FC<{
 const App = () => {
   const isDarkMode = useColorScheme() === "dark";
 
+  // useEffect(() => {
+  //   console.log(Constants.systemFonts);
+  // }, []);
+
   const backgroundStyle = {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   };
@@ -77,7 +83,7 @@ const App = () => {
             backgroundColor: isDarkMode ? Colors.black : Colors.white,
           }}
         >
-          <Section title="Step One">It's done.</Section>
+          <Section title="Step One">OK 666</Section>
           <Section title="See Your Changes">
             <ReloadInstructions />
           </Section>

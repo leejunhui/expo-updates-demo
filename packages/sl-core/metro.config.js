@@ -8,7 +8,11 @@ const watchFolders = [path.resolve(path.join(__dirname, "../../node_modules"))];
 
 const nodeModulesPaths = [path.resolve(path.join(__dirname, "./node_modules"))];
 
+const { createMetroConfiguration } = require('expo-yarn-workspaces');
+const expoMetroConfiguration = createMetroConfiguration(__dirname);
+
 module.exports = {
+  ...expoMetroConfiguration,
   transformer: {
     getTransformOptions: async () => ({
       transform: {
@@ -16,6 +20,7 @@ module.exports = {
         inlineRequires: true,
       },
     }),
+    ...expoMetroConfiguration.transformer,
   },
   resolver: {
     extraNodeModules,

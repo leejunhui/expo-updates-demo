@@ -3,6 +3,15 @@
 #import <React/RCTBridge.h>
 #import <React/RCTBundleURLProvider.h>
 #import <React/RCTRootView.h>
+#import <React/RCTLinkingManager.h>
+
+#if defined(EX_DEV_MENU_ENABLED)
+@import EXDevMenu;
+#endif
+
+#if defined(EX_DEV_LAUNCHER_ENABLED)
+#include <EXDevLauncher/EXDevLauncherController.h>
+#endif
 
 #ifdef FB_SONARKIT_ENABLED
 #import <FlipperKit/FlipperClient.h>
@@ -30,33 +39,75 @@ static void InitializeFlipper(UIApplication *application) {
 #ifdef FB_SONARKIT_ENABLED
   InitializeFlipper(application);
 #endif
-
-  RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:self launchOptions:launchOptions];
-  RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:bridge
-                                                   moduleName:@"BooklnSaas"
-                                            initialProperties:nil];
-
-  if (@available(iOS 13.0, *)) {
-      rootView.backgroundColor = [UIColor systemBackgroundColor];
-  } else {
-      rootView.backgroundColor = [UIColor whiteColor];
-  }
-
+  
   self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
-  UIViewController *rootViewController = [UIViewController new];
+#if defined(EX_DEV_LAUNCHER_ENABLED)
+  EXDevLauncherController *controller = [EXDevLauncherController sharedInstance];
+  [controller startWithWindow:self.window delegate:(id<EXDevLauncherControllerDelegate>)self launchOptions:launchOptions];
+#else
+  [];
+#endif
+  
+  [super application:application didFinishLaunchingWithOptions:launchOptions];
+  
+  return YES;
+}
+
+- (RCTBridge *)initializeReactNativeApp:(NSDictionary *)launchOptions
+{
+  
+  RCTBridge *bridge = [self.reactDelegate createBridgeWithDelegate:self launchOptions:launchOptions];
+  RCTRootView *rootView = [self.reactDelegate createRootViewWithBridge:bridge
+                                                            moduleName:@"BooklnSaas"
+                                                     initialProperties:nil];
+  
+  if (@available(iOS 13.0, *)) {
+    rootView.backgroundColor = [UIColor systemBackgroundColor];
+  } else {
+    rootView.backgroundColor = [UIColor whiteColor];
+  }
+  
+  UIViewController *rootViewController = [self.reactDelegate createRootViewController];
   rootViewController.view = rootView;
   self.window.rootViewController = rootViewController;
   [self.window makeKeyAndVisible];
-  return YES;
+  return bridge;
 }
 
 - (NSURL *)sourceURLForBridge:(RCTBridge *)bridge
 {
 #if DEBUG
-  return [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index" fallbackResource:nil];
+#if defined(EX_DEV_LAUNCHER_ENABLED)
+  return [[EXDevLauncherController sharedInstance] sourceUrl];
+#else
+  return [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"packages/sl-core/index" fallbackResource:nil];
+#endif
 #else
   return [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
 #endif
 }
 
+- (BOOL)application:(UIApplication *)app openURL:(NSURL *)url options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options
+{
+#if defined(EX_DEV_LAUNCHER_ENABLED)
+  if ([EXDevLauncherController.sharedInstance onDeepLink:url options:options]) {
+    return true;
+  }
+#endif
+  return [RCTLinkingManager application:app openURL:url options:options];
+}
+
 @end
+
+#if defined(EX_DEV_LAUNCHER_ENABLED)
+@implementation AppDelegate (EXDevLauncherControllerDelegate)
+
+- (void)devLauncherController:(EXDevLauncherController *)developmentClientController
+          didStartWithSuccess:(BOOL)success
+{
+  developmentClientController.appBridge = [self initializeReactNativeApp:[EXDevLauncherController.sharedInstance getLaunchOptions]];
+}
+
+@end
+#endif
+

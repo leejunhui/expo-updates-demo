@@ -1,6 +1,7 @@
 {
   "name": "sl-core",
   "version": "0.0.1",
+  "main": "__generated__/AppEntry.js",
   "private": true,
   "scripts": {
     "android": "react-native run-android",
@@ -8,9 +9,13 @@
     "start": "react-native start",
     "start-reset-cache": "react-native start --reset-cache",
     "test": "jest",
-    "lint": "eslint . --ext .js,.jsx,.ts,.tsx"
+    "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
+    "expo-start": "expo start --dev-client --scheme=com.leejunhui.rn.lernyarnworkspace",
+    "expo-start-reset-cache": "expo start --dev-client --scheme=com.leejunhui.rn.lernyarnworkspace -c",
+    "postinstall": "expo-yarn-workspaces postinstall"
   },
   "dependencies": {
+    "expo": ">=44.0.0-0 <45.0.0",
     "expo-dev-client": "^0.8.4",
     "react": "17.0.2",
     "react-native": "0.67.3"
@@ -18,6 +23,8 @@
   "devDependencies": {
     "@types/react-native": "^0.66.15",
     "babel-jest": "^26.6.3",
+    "expo-cli": "^5.2.0",
+    "expo-yarn-workspaces": "^1.7.0",
     "metro-react-native-babel-preset": "^0.66.2",
     "react-test-renderer": "17.0.2"
   },

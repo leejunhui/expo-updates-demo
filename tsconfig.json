@@ -27,5 +27,6 @@
     "skipLibCheck": true
   },
   "include": ["./packages/**/*", "./features/**/*"],
-  "exclude": ["node_modules", "./src/**/*.js"]
+  "exclude": ["node_modules", "./src/**/*.js"],
+  "extends": "expo/tsconfig.base"
 }
