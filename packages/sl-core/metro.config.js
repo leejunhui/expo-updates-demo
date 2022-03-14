@@ -14,6 +14,7 @@ const expoMetroConfiguration = createMetroConfiguration(__dirname);
 module.exports = {
   ...expoMetroConfiguration,
   transformer: {
+    assetPlugins: ['expo-asset/tools/hashAssetFiles'],
     getTransformOptions: async () => ({
       transform: {
         experimentalImportSupport: true,

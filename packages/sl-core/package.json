@@ -12,11 +12,14 @@
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
     "expo-start": "expo start --dev-client --scheme=com.leejunhui.rn.lernyarnworkspace",
     "expo-start-reset-cache": "expo start --dev-client --scheme=com.leejunhui.rn.lernyarnworkspace -c",
-    "postinstall": "expo-yarn-workspaces postinstall"
+    "postinstall": "expo-yarn-workspaces postinstall",
+    "expo-export-ios": "expo export --platform=ios --experimental-bundle",
+    "expo-export-android": "expo export --platform=android --experimental-bundle"
   },
   "dependencies": {
     "expo": ">=44.0.0-0 <45.0.0",
     "expo-dev-client": "^0.8.4",
+    "expo-updates": "^0.11.6",
     "react": "17.0.2",
     "react-native": "0.67.3"
   },

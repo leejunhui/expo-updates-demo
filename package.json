@@ -38,6 +38,9 @@
     "ios-13pm": "yarn workspace sl-core react-native run-ios --simulator \"iPhone 13 Pro Max\"",
     "xcode": "open packages/sl-core/ios/BooklnSaas.xcworkspace",
     "expo-start": "yarn workspace sl-core expo-start",
-    "expo-restart": "yarn workspace sl-core expo-start-reset-cache"
+    "expo-restart": "yarn workspace sl-core expo-start-reset-cache",
+    "build:ios": "react-native bundle --entry-file='./packages/sl-core/index.js' --bundle-output='./packages/sl-core/ios/main.jsbundle' --dev=false --platform='ios' --assets-dest='./packages/sl-core/ios'",
+    "expo-export-ios": "yarn workspace sl-core expo-export-ios",
+    "expo-export-android": "yarn workspace sl-core expo-export-android"
   }
 }

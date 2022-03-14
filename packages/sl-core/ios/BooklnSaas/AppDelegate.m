@@ -32,6 +32,10 @@ static void InitializeFlipper(UIApplication *application) {
 }
 #endif
 
+@interface AppDelegate () <RCTBridgeDelegate>
+@property (nonatomic, strong) NSDictionary *launchOptions;
+@end
+
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
@@ -40,12 +44,19 @@ static void InitializeFlipper(UIApplication *application) {
   InitializeFlipper(application);
 #endif
   
+  self.launchOptions = launchOptions;
   self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
+#ifdef DEBUG
 #if defined(EX_DEV_LAUNCHER_ENABLED)
   EXDevLauncherController *controller = [EXDevLauncherController sharedInstance];
   [controller startWithWindow:self.window delegate:(id<EXDevLauncherControllerDelegate>)self launchOptions:launchOptions];
 #else
-  [];
+  [self initializeReactNativeApp:launchOptions];
+#endif
+#else
+  EXUpdatesAppController *controller = [EXUpdatesAppController sharedInstance];
+  controller.delegate = self;
+  [controller startAndShowLaunchScreen:self.window];
 #endif
   
   [super application:application didFinishLaunchingWithOptions:launchOptions];
@@ -53,10 +64,9 @@ static void InitializeFlipper(UIApplication *application) {
   return YES;
 }
 
-- (RCTBridge *)initializeReactNativeApp:(NSDictionary *)launchOptions
+- (RCTBridge *)initializeReactNativeApp
 {
-  
-  RCTBridge *bridge = [self.reactDelegate createBridgeWithDelegate:self launchOptions:launchOptions];
+  RCTBridge *bridge = [self.reactDelegate createBridgeWithDelegate:self launchOptions:self.launchOptions];
   RCTRootView *rootView = [self.reactDelegate createRootViewWithBridge:bridge
                                                             moduleName:@"BooklnSaas"
                                                      initialProperties:nil];
@@ -77,14 +87,18 @@ static void InitializeFlipper(UIApplication *application) {
 - (NSURL *)sourceURLForBridge:(RCTBridge *)bridge
 {
 #if DEBUG
-#if defined(EX_DEV_LAUNCHER_ENABLED)
-  return [[EXDevLauncherController sharedInstance] sourceUrl];
+  #if defined(EX_DEV_LAUNCHER_ENABLED)
+    return [[EXDevLauncherController sharedInstance] sourceUrl];
+  #else
+    return [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"packages/sl-core/index" fallbackResource:nil];
+  #endif
 #else
-  return [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"packages/sl-core/index" fallbackResource:nil];
+  return [[EXUpdatesAppController sharedInstance] launchAssetUrl];
 #endif
-#else
-  return [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
-#endif
+}
+
+- (void)appController:(EXUpdatesAppController *)appController didStartWithSuccess:(BOOL)success {
+   appController.bridge = [self initializeReactNativeApp];
 }
 
 - (BOOL)application:(UIApplication *)app openURL:(NSURL *)url options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options
@@ -105,7 +119,7 @@ static void InitializeFlipper(UIApplication *application) {
 - (void)devLauncherController:(EXDevLauncherController *)developmentClientController
           didStartWithSuccess:(BOOL)success
 {
-  developmentClientController.appBridge = [self initializeReactNativeApp:[EXDevLauncherController.sharedInstance getLaunchOptions]];
+  developmentClientController.appBridge = [self initializeReactNativeApp];
 }
 
 @end

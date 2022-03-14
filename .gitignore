@@ -32,3 +32,5 @@ packages/sl-core/.expo
 .expo
 packages/sl-core/ios/assets
 packages/sl-core/ios/libs/FoxitRDK.framework
+packages/sl-core/vendor
+packages/sl-core/dist
